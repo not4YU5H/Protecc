@@ -29,11 +29,12 @@ import com.protecc.navigation.Screen
 import com.protecc.ui.theme.AnimatedButton
 import com.protecc.ui.theme.ProteccTheme
 import com.protecc.ui.theme.Purple700
+import kotlinx.coroutines.delay
 import java.security.AccessController.getContext
 
 @ExperimentalMaterialApi
 @Composable
-fun Enter_pin () {
+fun Enter_pin (navController: NavHostController) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -74,7 +75,15 @@ fun Enter_pin () {
         )
         Spacer(modifier = Modifier.padding(20.dp))
         AnimatedButton(
-            onClicked = { if(isError) showMessage(context, message = "Error: PIN length should be 4!") }
+             onClicked = {
+                if(isError)
+                {
+                    showMessage(context, message = "Error: PIN length should be 4!")
+                }
+                else {
+//                    navController.navigate(Screen.GalleryPicker.route)
+                    navController.navigate(Screen.File_type_screen.route)
+                }}
         )
     }
 }

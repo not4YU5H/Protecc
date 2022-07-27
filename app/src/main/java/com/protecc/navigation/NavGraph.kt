@@ -15,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.protecc.AnimatedSplashScreen
 import com.protecc.Enter_pin
+import com.protecc.File_type_screen
+import com.protecc.GalleryPicker
 import com.protecc.navigation.Screen.*
 
 
@@ -28,11 +30,19 @@ fun SetupNavGraph (navController: NavHostController) {
             AnimatedSplashScreen(navController = navController)
         }
         composable(route = Enter_pin.route) {
-            Enter_pin()
+            Enter_pin(navController = navController)
+        }
+        composable(route = GalleryPicker.route) {
+            GalleryPicker()
         }
         composable(route = Home.route) {
             Box(modifier = Modifier.fillMaxSize())
         }
+        composable(route = New_old_file.route) {
 
+        }
+        composable(route = File_type_screen.route) {
+            com.protecc.File_type_screen()
+        }
     }
 }
