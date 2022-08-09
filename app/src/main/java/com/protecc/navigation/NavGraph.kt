@@ -19,7 +19,7 @@ import com.protecc.File_type_screen
 import com.protecc.GalleryPicker
 import com.protecc.navigation.Screen.*
 
-
+@ExperimentalMaterialApi
 @Composable
 fun SetupNavGraph (navController: NavHostController) {
     NavHost(
@@ -42,7 +42,7 @@ fun SetupNavGraph (navController: NavHostController) {
 
         }
         composable(route = File_type_screen.route) {
-            com.protecc.File_type_screen()
+            File_type_screen()
         }
     }
 }

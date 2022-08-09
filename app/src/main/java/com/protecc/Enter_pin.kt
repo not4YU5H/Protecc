@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,9 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.protecc.navigation.Screen
-import com.protecc.ui.theme.AnimatedButton
-import com.protecc.ui.theme.ProteccTheme
-import com.protecc.ui.theme.Purple700
+import com.protecc.ui.theme.*
 import kotlinx.coroutines.delay
 import java.security.AccessController.getContext
 
@@ -76,15 +75,23 @@ fun Enter_pin (navController: NavHostController) {
         Spacer(modifier = Modifier.padding(20.dp))
         AnimatedButton(
              onClicked = {
-                if(isError)
-                {
-                    showMessage(context, message = "Error: PIN length should be 4!")
-                }
-                else {
+//                if(isError)
+//                {
+//                    showMessage(context, message = "Error: PIN length should be 4!")
+//                }
+//                else {
 //                    navController.navigate(Screen.GalleryPicker.route)
                     navController.navigate(Screen.File_type_screen.route)
-                }}
+//                }
+    }
+
         )
+        
+//        Gradient_button(text = "Unlock!", textColor = Color.White, gradient = Brush.horizontalGradient(
+//            colors = listOf(color1, color2)
+//        )) {
+//            navController.navigate(Screen.File_type_screen.route)
+//        }
     }
 }
 
