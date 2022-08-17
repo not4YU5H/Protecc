@@ -1,7 +1,10 @@
 package com.protecc
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,31 +27,45 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.protecc.datastore.StoreUserPin
 import com.protecc.navigation.Screen
 import com.protecc.ui.theme.*
-import kotlinx.coroutines.delay
-import java.security.AccessController.getContext
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+import com.google.android.exoplayer2.ui.StyledPlayerView
 
 @ExperimentalMaterialApi
 @Composable
 fun Enter_pin (navController: NavHostController) {
 
     val context = LocalContext.current
+
+    val packageName = "com.protecc"
+    val rawId = context.resources.getIdentifier("clouds","raw", packageName)
+    val videoUri = "android.resource://$packageName/$rawId"
+
     val dataStore = StoreUserPin(context)
     val savedPin = dataStore.getPin.collectAsState(initial = "")
+    val exoPlayer = remember { context.buildExoPlayer(Uri.parse(videoUri)) }
+
+    BackEffect(exoPlayer)
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(if (isSystemInDarkTheme()) Color.Black else Color.White),
+            .fillMaxSize(),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
 
     ) {
+
+
         var password by rememberSaveable { mutableStateOf("") }
         var passwordVisibility by remember { mutableStateOf(false) }
         var icon = if(passwordVisibility) painterResource(id = R.drawable.security_icons_eye) else painterResource(id = R.drawable.security_icons_incognito)
@@ -108,6 +125,45 @@ fun Enter_pin (navController: NavHostController) {
         }
     }
 }
+
+private fun Context.buildExoPlayer(uri: Uri) =
+    ExoPlayer.Builder(this).build().apply {
+        setMediaItem(MediaItem.fromUri(uri))
+        repeatMode = Player.REPEAT_MODE_ALL
+        playWhenReady = true
+        prepare()
+    }
+
+private fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
+    StyledPlayerView(this).apply {
+        player = exoPlayer
+        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        useController = false
+        resizeMode = RESIZE_MODE_ZOOM
+    }
+
+@Composable
+fun BackEffect(exoPlayer: ExoPlayer) {
+    DisposableEffect(
+        AndroidView(
+            factory = { it.buildPlayerView(exoPlayer) },
+            modifier = Modifier.fillMaxSize()
+        )
+    ) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+}
+
+//fun getVideoUri(context: Context): Uri {
+////    val rawId = resources.getIdentifier("clouds", "raw", packageName)
+//    val packageName = "com.protecc"
+//    val rawId = context.resources.getIdentifier("clouds","raw", packageName)
+//    val videoUri = "android.resource://$packageName/$rawId"
+//    return Uri.parse(videoUri)
+//}
+
 
 fun showMessage(context: Context, message:String){
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

@@ -1,7 +1,10 @@
 package com.protecc
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,8 +27,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.protecc.datastore.StoreLoggedIn
 import com.protecc.datastore.StoreUserPin
 import com.protecc.navigation.Screen
@@ -39,14 +48,22 @@ import java.security.AccessController.getContext
 fun Set_pin (navController: NavHostController) {
 
     val context = LocalContext.current
+
+    val packageName = "com.protecc"
+    val rawId = context.resources.getIdentifier("clouds","raw", packageName)
+    val videoUri = "android.resource://$packageName/$rawId"
+
     val scope = rememberCoroutineScope()
     val dataStore = StoreUserPin(context)
     val dataStore_l = StoreLoggedIn(context)
 
+    val exoPlayer = remember { context.buildExoPlayer(Uri.parse(videoUri)) }
+
+    BackEffect_s(exoPlayer)
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(if (isSystemInDarkTheme()) Color.Black else Color.White),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
 
@@ -104,6 +121,39 @@ fun Set_pin (navController: NavHostController) {
             }
             navController.popBackStack()
             navController.navigate(Screen.Enter_pin.route)
+        }
+    }
+}
+
+private fun Context.buildExoPlayer(uri: Uri) =
+    ExoPlayer.Builder(this).build().apply {
+        setMediaItem(MediaItem.fromUri(uri))
+        repeatMode = Player.REPEAT_MODE_ALL
+        playWhenReady = true
+        prepare()
+    }
+
+private fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
+    StyledPlayerView(this).apply {
+        player = exoPlayer
+        layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        useController = false
+        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+    }
+
+@Composable
+fun BackEffect_s(exoPlayer: ExoPlayer) {
+    DisposableEffect(
+        AndroidView(
+            factory = { it.buildPlayerView(exoPlayer) },
+            modifier = Modifier.fillMaxSize()
+        )
+    ) {
+        onDispose {
+            exoPlayer.release()
         }
     }
 }
