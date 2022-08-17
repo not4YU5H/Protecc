@@ -16,14 +16,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.protecc.datastore.StoreLoggedIn
+import com.protecc.datastore.StoreUserPin
 import com.protecc.navigation.Screen
 import com.protecc.ui.theme.Purple700
 import kotlinx.coroutines.delay
 
 @Composable
 fun AnimatedSplashScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val dataStore = StoreLoggedIn(context)
+    val is_user = dataStore.getUser.collectAsState(initial = "")
     var startAnimation by remember {
         mutableStateOf(false)
     }
@@ -34,7 +40,15 @@ fun AnimatedSplashScreen(navController: NavHostController) {
         startAnimation = true
         delay(4000)
         navController.popBackStack()
-        navController.navigate(Screen.Enter_pin.route)
+
+        if(is_user.value!="1")
+        {
+            navController.navigate(Screen.Set_pin.route)
+        }
+        else
+        {
+            navController.navigate(Screen.Enter_pin.route)
+        }
     }
     Splash(alpha = alphaAnim.value)
 }

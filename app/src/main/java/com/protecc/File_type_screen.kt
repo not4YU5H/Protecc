@@ -9,11 +9,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.protecc.navigation.Screen
 import com.protecc.ui.theme.color1
 import com.protecc.ui.theme.color2
 
 @Composable
-fun File_type_screen() {
+fun File_type_screen(navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -33,7 +35,9 @@ fun File_type_screen() {
                         color2
                     )
                 )
-            ) { }
+            ) {
+                navController.navigate(Screen.Images_screen.route)
+            }
             Spacer(modifier = Modifier
                 .padding(20.dp))
             Gradient_button(
@@ -78,11 +82,4 @@ fun File_type_screen() {
 
         }
     }
-}
-
-@Composable
-@Preview
-fun File_type_screen_preview()
-{
-    File_type_screen()
 }

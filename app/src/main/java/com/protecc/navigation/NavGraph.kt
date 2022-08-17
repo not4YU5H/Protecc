@@ -13,10 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.protecc.AnimatedSplashScreen
-import com.protecc.Enter_pin
-import com.protecc.File_type_screen
-import com.protecc.GalleryPicker
+import com.protecc.*
 import com.protecc.navigation.Screen.*
 
 @ExperimentalMaterialApi
@@ -28,6 +25,9 @@ fun SetupNavGraph (navController: NavHostController) {
     ) {
         composable(route = Splash.route) {
             AnimatedSplashScreen(navController = navController)
+        }
+        composable(route = Set_pin.route) {
+            Set_pin(navController = navController)
         }
         composable(route = Enter_pin.route) {
             Enter_pin(navController = navController)
@@ -42,7 +42,10 @@ fun SetupNavGraph (navController: NavHostController) {
 
         }
         composable(route = File_type_screen.route) {
-            File_type_screen()
+            File_type_screen(navController = navController)
+        }
+        composable(route = Images_screen.route) {
+            Images_screen(navController = navController)
         }
     }
 }

@@ -24,22 +24,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.protecc.datastore.StoreLoggedIn
 import com.protecc.datastore.StoreUserPin
 import com.protecc.navigation.Screen
 import com.protecc.ui.theme.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.security.AccessController.getContext
 
 @ExperimentalMaterialApi
 @Composable
-fun Enter_pin (navController: NavHostController) {
+fun Set_pin (navController: NavHostController) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val dataStore = StoreUserPin(context)
-    val savedPin = dataStore.getPin.collectAsState(initial = "")
+    val dataStore_l = StoreLoggedIn(context)
 
     Column(
         modifier = Modifier
@@ -60,7 +62,7 @@ fun Enter_pin (navController: NavHostController) {
             }
             isError = it.length < 4
         },
-        placeholder = { Text(text = "Enter PIN")},
+            placeholder = { Text(text = "Enter PIN")},
             label = { Text(text = "4-digit PIN")},
             maxLines = 1,
             trailingIcon = {
@@ -73,7 +75,7 @@ fun Enter_pin (navController: NavHostController) {
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
 
-            ),
+                ),
             visualTransformation = if(passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             isError = isError
 
@@ -92,24 +94,21 @@ fun Enter_pin (navController: NavHostController) {
 //    }
 //
 //        )
-        
-        Gradient_button(text = "Unlock!", textColor = Color.White, gradient = Brush.horizontalGradient(
+
+        Gradient_button(text = "Set pin", textColor = Color.White, gradient = Brush.horizontalGradient(
             colors = listOf(color1, color2)
         )) {
-            if(password == savedPin.value)
-            {
-                navController.popBackStack()
-                navController.navigate(Screen.File_type_screen.route)
+            scope.launch {
+                dataStore.savePin(password)
+                dataStore_l.isUser("1")
             }
-            else
-            {
-                showMessage(context, message = "Wrong Pin")
-            }
+            navController.popBackStack()
+            navController.navigate(Screen.Enter_pin.route)
         }
     }
 }
 
-fun showMessage(context: Context, message:String){
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
+//fun showMessage(context: Context, message:String){
+//    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//}
 

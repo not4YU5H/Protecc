@@ -1,26 +1,34 @@
 package com.protecc
 
-import android.text.Layout
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.protecc.navigation.Screen
 
-//@Composable
-//fun Images_screen() {
-//    Row(
-//        horizontalArrangement = Arrangement.spacedBy(16.dp),
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(8.dp)
-//    ) {
-//        Image(painter = painterResource(id = ))
-//    }
-//}
+@Composable
+fun Images_screen (navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+    verticalArrangement = Arrangement.Bottom,
+    horizontalAlignment = Alignment.End) {
+        FloatingActionButton(onClick = { navController.navigate(Screen.GalleryPicker.route) },
+        backgroundColor = Color.Blue,
+        contentColor = Color.White
+        ) {
+            Icon(Icons.Filled.Add, "")
+        }
+    }
+}
